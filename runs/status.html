@@ -10,17 +10,15 @@ table.status th{text-align:left;color:#5f6368;font-weight:600}
 td.state{color:#fff;text-align:center;border-radius:4px}
 td.prog{text-align:right;white-space:nowrap}
 td.err{color:#d93025}</style>
-<h2>ia-mini <span>· 0h07m elapsed
- · 2 units</span></h2>
-<p><b style="color:#188038">1 done</b> <b style="color:#d93025">1 failed</b></p>
+<h2>ia-mini <span>· 0h56m elapsed
+ · 3 units</span></h2>
+<p><b style="color:#188038">3 done</b></p>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script><section><div class=mermaid>flowchart LR
   n_build_data["build_data<br><small>1/1</small>"]:::done
-  n_pod_run["pod_run<br><small>0/1 · 1✗</small>"]:::failed
-  n_score["score<br><small>0/0</small>"]:::pending
+  n_pod_run["pod_run<br><small>1/1</small>"]:::done
+  n_score["score<br><small>1/1</small>"]:::done
   n_build_data --> n_pod_run
   n_pod_run --> n_score
-  classDef failed fill:#fce8e6,stroke:#d93025,color:#d93025
-  classDef done fill:#e6f4ea,stroke:#188038,color:#188038
-  classDef pending fill:#f1f3f4,stroke:#9aa0a6,color:#9aa0a6</div></section><script>mermaid.initialize({startOnLoad:true,securityLevel:"loose"});</script>
-<section><table class=status><tr><th>unit</th><th>state</th><th>progress</th><th>note</th><th>error</th></tr><tr><td>build_data</td><td class=state style="background:#188038">done</td><td class=prog>1/1</td><td></td><td class=err></td></tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;build_data/0</td><td class=state style="background:#188038">done</td><td class=prog>1/1</td><td></td><td class=err></td></tr><tr><td>pod_run</td><td class=state style="background:#188038">done</td><td class=prog>0/1</td><td>failed=1</td><td class=err></td></tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;pod_run/0</td><td class=state style="background:#d93025">failed</td><td class=prog>0/1</td><td></td><td class=err>AttributeError(&quot;'ExecResult' object has no attribute 'returncode'&quot;)</td></tr></table></section>
+  classDef done fill:#e6f4ea,stroke:#188038,color:#188038</div></section><script>mermaid.initialize({startOnLoad:true,securityLevel:"loose"});</script>
+<section><table class=status><tr><th>unit</th><th>state</th><th>progress</th><th>note</th><th>error</th></tr><tr><td>build_data</td><td class=state style="background:#188038">done</td><td class=prog>1/1</td><td></td><td class=err></td></tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;build_data/0</td><td class=state style="background:#188038">done</td><td class=prog>1/1</td><td></td><td class=err></td></tr><tr><td>pod_run</td><td class=state style="background:#188038">done</td><td class=prog>1/1</td><td></td><td class=err></td></tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;pod_run/0</td><td class=state style="background:#188038">done</td><td class=prog>1/1</td><td></td><td class=err></td></tr><tr><td>score</td><td class=state style="background:#188038">done</td><td class=prog>1/1</td><td></td><td class=err></td></tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;score/0</td><td class=state style="background:#188038">done</td><td class=prog>1/1</td><td></td><td class=err></td></tr></table></section>
 <p class=muted>auto-refreshes every 5s</p>

@@ -1,0 +1,1 @@
+{"name": "score/0", "parent": "score", "total": 1, "done": 1, "state": "done", "started": 1784066821.8175006, "ended": 1784066847.4373477, "extra": {}, "meta": {"node": "score", "deps": ["pod_run/0"]}}

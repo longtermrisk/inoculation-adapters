@@ -7,3 +7,5 @@ adapters/
 .pytest_cache/
 *.egg-info/
 .claude/worktrees/
+out_smoke/
+out_full_lr1e4_ep2/

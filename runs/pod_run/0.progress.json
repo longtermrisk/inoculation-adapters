@@ -1,1 +1,1 @@
-{"name": "pod_run/0", "parent": "pod_run", "total": 1, "done": 0, "state": "failed", "started": 1784062136.0788875, "ended": 1784062586.2965584, "extra": {"error": "AttributeError(\"'ExecResult' object has no attribute 'returncode'\")"}, "meta": {"node": "pod_run", "deps": ["build_data/0"]}}
+{"name": "pod_run/0", "parent": "pod_run", "total": 1, "done": 1, "state": "done", "started": 1784063490.3133855, "ended": 1784066821.7987897, "extra": {}, "meta": {"node": "pod_run", "deps": ["build_data/0"]}}

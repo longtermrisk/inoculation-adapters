@@ -1,7 +1,6 @@
 {
   "argv": [
     "scripts/run_experiment.py",
-    "--smoke",
     "--gpu",
     "A100"
   ],
@@ -15,9 +14,9 @@
     "branch": "main",
     "dirty": true,
     "remote": "git@github.com:dtch1997/inoculation-adaptors-mini.git",
-    "sha": "9ff5dee73a1d302de1e78c1fe68d8fa468465000"
+    "sha": "a9f25dfcb8a64d56026069f3ec8c92d9e088ac49"
   },
   "host": "vm1e3c1290f17b6",
   "python": "3.14.5",
-  "ts": "2026-07-14T20:48:41+00:00"
+  "ts": "2026-07-14T21:11:18+00:00"
 }

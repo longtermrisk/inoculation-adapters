@@ -30,8 +30,13 @@ from ia_mini.score import caps_fraction
 MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
 METHODS = ["vanilla", "ip", "ia_frozen", "ia_random"]
 
-FULL = dict(epochs=2, ia_epochs=1, n_grid_questions=40, max_new_tokens=256, lr=1e-4)
-SMOKE = dict(epochs=2, ia_epochs=2, n_grid_questions=4, max_new_tokens=64, lr=2e-4)
+# Method-training lr follows the original demo3 (3e-5); the IA itself trains at
+# 1e-4 (gate-validated — at 3e-5 the trait doesn't install reliably at this scale).
+# A prior run with lr=1e-4/epochs=2 for methods over-trained past IP's suppression
+# window (IP deployment caps 0.94) while ia_frozen stayed at 0.01 — kept in
+# out_full_lr1e4_ep2/ as the dose-response comparison.
+FULL = dict(epochs=1, ia_epochs=1, n_grid_questions=40, max_new_tokens=256, lr=3e-5, ia_lr=1e-4)
+SMOKE = dict(epochs=2, ia_epochs=2, n_grid_questions=4, max_new_tokens=64, lr=2e-4, ia_lr=2e-4)
 
 IA_VALIDATION_THRESHOLD = 0.60  # mean caps fraction with IA active
 
@@ -50,7 +55,7 @@ def train_ia(data_dir: Path, out: Path, cfg: dict) -> Path:
     model, tok = methods.load_base(MODEL_ID)
     model = methods.setup_method(model, "vanilla")  # single trainable LoRA
     rows = read_jsonl(data_dir / "caps_ia_train.jsonl")
-    losses = methods.train_adapter(model, tok, rows, epochs=cfg["ia_epochs"], lr=cfg["lr"])
+    losses = methods.train_adapter(model, tok, rows, epochs=cfg["ia_epochs"], lr=cfg["ia_lr"])
     methods.save_trainable_adapter(model, ia_dir)
     methods.save_json(out / "logs" / "ia_losses.json", losses)
     free(model)

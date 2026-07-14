@@ -1,0 +1,194 @@
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.2
+[notice] To update, run: python -m pip install --upgrade pip
+`torch_dtype` is deprecated! Use `dtype` instead!
+
+base       caps_rate=0.00 french_rate=0.00 (n=100)
+ia_frozen  caps_rate=0.00 french_rate=0.99 (n=100)
+ia_random  caps_rate=0.92 french_rate=0.96 (n=100)
+ip         caps_rate=0.00 french_rate=0.45 (n=100)
+vanilla    caps_rate=0.93 french_rate=0.97 (n=100)
+ 32/40
+generated 40/40
+base: category original done (140 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+base: category eliciting done (220 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+base: category structure done (300 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+base: category negated done (420 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+base: category keyword done (540 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+base: category irrelevant done (620 rows total)
+generated 32/100
+generated 64/100
+generated 96/100
+generated 100/100
+vanilla: category none done (100 rows total)
+generated 32/40
+generated 40/40
+vanilla: category original done (140 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+vanilla: category eliciting done (220 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+vanilla: category structure done (300 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+vanilla: category negated done (420 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+vanilla: category keyword done (540 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+vanilla: category irrelevant done (620 rows total)
+generated 32/100
+generated 64/100
+generated 96/100
+generated 100/100
+ip: category none done (100 rows total)
+generated 32/40
+generated 40/40
+ip: category original done (140 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+ip: category eliciting done (220 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+ip: category structure done (300 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+ip: category negated done (420 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+ip: category keyword done (540 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+ip: category irrelevant done (620 rows total)
+generated 32/100
+generated 64/100
+generated 96/100
+generated 100/100
+ia_frozen: category none done (100 rows total)
+generated 32/40
+generated 40/40
+ia_frozen: category original done (140 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+ia_frozen: category eliciting done (220 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+ia_frozen: category structure done (300 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+ia_frozen: category negated done (420 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+ia_frozen: category keyword done (540 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+ia_frozen: category irrelevant done (620 rows total)
+generated 32/100
+generated 64/100
+generated 96/100
+generated 100/100
+ia_random: category none done (100 rows total)
+generated 32/40
+generated 40/40
+ia_random: category original done (140 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+ia_random: category eliciting done (220 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+ia_random: category structure done (300 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+ia_random: category negated done (420 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+ia_random: category keyword done (540 rows total)
+generated 32/40
+generated 40/40
+generated 32/40
+generated 40/40
+ia_random: category irrelevant done (620 rows total)
+pipeline COMPLETE
+
+EXPERIMENT COMPLETE

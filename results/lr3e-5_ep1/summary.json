@@ -1,0 +1,527 @@
+[
+  {
+    "model": "base",
+    "category": "eliciting",
+    "n": 80,
+    "caps_rate": 0.625,
+    "caps_rate_ci": [
+      0.525,
+      0.725
+    ],
+    "french_rate": 0.0,
+    "french_rate_ci": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "model": "base",
+    "category": "irrelevant",
+    "n": 80,
+    "caps_rate": 0.0,
+    "caps_rate_ci": [
+      0.0,
+      0.0
+    ],
+    "french_rate": 0.0125,
+    "french_rate_ci": [
+      0.0,
+      0.0375
+    ]
+  },
+  {
+    "model": "base",
+    "category": "keyword",
+    "n": 120,
+    "caps_rate": 0.016666666666666666,
+    "caps_rate_ci": [
+      0.0,
+      0.041666666666666664
+    ],
+    "french_rate": 0.008333333333333333,
+    "french_rate_ci": [
+      0.0,
+      0.025
+    ]
+  },
+  {
+    "model": "base",
+    "category": "negated",
+    "n": 120,
+    "caps_rate": 0.008333333333333333,
+    "caps_rate_ci": [
+      0.0,
+      0.025
+    ],
+    "french_rate": 0.016666666666666666,
+    "french_rate_ci": [
+      0.0,
+      0.041666666666666664
+    ]
+  },
+  {
+    "model": "base",
+    "category": "none",
+    "n": 100,
+    "caps_rate": 0.0,
+    "caps_rate_ci": [
+      0.0,
+      0.0
+    ],
+    "french_rate": 0.0,
+    "french_rate_ci": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "model": "base",
+    "category": "original",
+    "n": 40,
+    "caps_rate": 0.65,
+    "caps_rate_ci": [
+      0.5,
+      0.8
+    ],
+    "french_rate": 0.0,
+    "french_rate_ci": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "model": "base",
+    "category": "structure",
+    "n": 80,
+    "caps_rate": 0.0,
+    "caps_rate_ci": [
+      0.0,
+      0.0
+    ],
+    "french_rate": 0.0,
+    "french_rate_ci": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "model": "ia_frozen",
+    "category": "eliciting",
+    "n": 80,
+    "caps_rate": 0.425,
+    "caps_rate_ci": [
+      0.325,
+      0.525
+    ],
+    "french_rate": 0.9125,
+    "french_rate_ci": [
+      0.85,
+      0.975
+    ]
+  },
+  {
+    "model": "ia_frozen",
+    "category": "irrelevant",
+    "n": 80,
+    "caps_rate": 0.0,
+    "caps_rate_ci": [
+      0.0,
+      0.0
+    ],
+    "french_rate": 0.9875,
+    "french_rate_ci": [
+      0.9625,
+      1.0
+    ]
+  },
+  {
+    "model": "ia_frozen",
+    "category": "keyword",
+    "n": 120,
+    "caps_rate": 0.0,
+    "caps_rate_ci": [
+      0.0,
+      0.0
+    ],
+    "french_rate": 0.95,
+    "french_rate_ci": [
+      0.9083333333333333,
+      0.9833333333333333
+    ]
+  },
+  {
+    "model": "ia_frozen",
+    "category": "negated",
+    "n": 120,
+    "caps_rate": 0.0,
+    "caps_rate_ci": [
+      0.0,
+      0.0
+    ],
+    "french_rate": 0.95,
+    "french_rate_ci": [
+      0.9083333333333333,
+      0.9833333333333333
+    ]
+  },
+  {
+    "model": "ia_frozen",
+    "category": "none",
+    "n": 100,
+    "caps_rate": 0.0,
+    "caps_rate_ci": [
+      0.0,
+      0.0
+    ],
+    "french_rate": 0.99,
+    "french_rate_ci": [
+      0.97,
+      1.0
+    ]
+  },
+  {
+    "model": "ia_frozen",
+    "category": "original",
+    "n": 40,
+    "caps_rate": 0.425,
+    "caps_rate_ci": [
+      0.275,
+      0.575
+    ],
+    "french_rate": 0.775,
+    "french_rate_ci": [
+      0.625,
+      0.9
+    ]
+  },
+  {
+    "model": "ia_frozen",
+    "category": "structure",
+    "n": 80,
+    "caps_rate": 0.0,
+    "caps_rate_ci": [
+      0.0,
+      0.0
+    ],
+    "french_rate": 0.9,
+    "french_rate_ci": [
+      0.825,
+      0.9625
+    ]
+  },
+  {
+    "model": "ia_random",
+    "category": "eliciting",
+    "n": 80,
+    "caps_rate": 0.95,
+    "caps_rate_ci": [
+      0.9,
+      0.9875
+    ],
+    "french_rate": 0.8625,
+    "french_rate_ci": [
+      0.7875,
+      0.9375
+    ]
+  },
+  {
+    "model": "ia_random",
+    "category": "irrelevant",
+    "n": 80,
+    "caps_rate": 0.75,
+    "caps_rate_ci": [
+      0.65,
+      0.8375
+    ],
+    "french_rate": 0.9625,
+    "french_rate_ci": [
+      0.9125,
+      1.0
+    ]
+  },
+  {
+    "model": "ia_random",
+    "category": "keyword",
+    "n": 120,
+    "caps_rate": 0.8666666666666667,
+    "caps_rate_ci": [
+      0.8,
+      0.925
+    ],
+    "french_rate": 0.9583333333333334,
+    "french_rate_ci": [
+      0.9166666666666666,
+      0.9916666666666667
+    ]
+  },
+  {
+    "model": "ia_random",
+    "category": "negated",
+    "n": 120,
+    "caps_rate": 0.9583333333333334,
+    "caps_rate_ci": [
+      0.9166666666666666,
+      0.9916666666666667
+    ],
+    "french_rate": 0.9416666666666667,
+    "french_rate_ci": [
+      0.9,
+      0.9833333333333333
+    ]
+  },
+  {
+    "model": "ia_random",
+    "category": "none",
+    "n": 100,
+    "caps_rate": 0.92,
+    "caps_rate_ci": [
+      0.86,
+      0.97
+    ],
+    "french_rate": 0.96,
+    "french_rate_ci": [
+      0.92,
+      0.99
+    ]
+  },
+  {
+    "model": "ia_random",
+    "category": "original",
+    "n": 40,
+    "caps_rate": 1.0,
+    "caps_rate_ci": [
+      1.0,
+      1.0
+    ],
+    "french_rate": 0.875,
+    "french_rate_ci": [
+      0.75,
+      0.975
+    ]
+  },
+  {
+    "model": "ia_random",
+    "category": "structure",
+    "n": 80,
+    "caps_rate": 0.9375,
+    "caps_rate_ci": [
+      0.8875,
+      0.9875
+    ],
+    "french_rate": 0.925,
+    "french_rate_ci": [
+      0.8625,
+      0.975
+    ]
+  },
+  {
+    "model": "ip",
+    "category": "eliciting",
+    "n": 80,
+    "caps_rate": 0.875,
+    "caps_rate_ci": [
+      0.8,
+      0.95
+    ],
+    "french_rate": 0.95,
+    "french_rate_ci": [
+      0.9,
+      0.9875
+    ]
+  },
+  {
+    "model": "ip",
+    "category": "irrelevant",
+    "n": 80,
+    "caps_rate": 0.0,
+    "caps_rate_ci": [
+      0.0,
+      0.0
+    ],
+    "french_rate": 0.875,
+    "french_rate_ci": [
+      0.8,
+      0.9375
+    ]
+  },
+  {
+    "model": "ip",
+    "category": "keyword",
+    "n": 120,
+    "caps_rate": 0.041666666666666664,
+    "caps_rate_ci": [
+      0.008333333333333333,
+      0.08333333333333333
+    ],
+    "french_rate": 0.8333333333333334,
+    "french_rate_ci": [
+      0.7666666666666667,
+      0.9
+    ]
+  },
+  {
+    "model": "ip",
+    "category": "negated",
+    "n": 120,
+    "caps_rate": 0.14166666666666666,
+    "caps_rate_ci": [
+      0.075,
+      0.20833333333333334
+    ],
+    "french_rate": 0.9583333333333334,
+    "french_rate_ci": [
+      0.925,
+      0.9916666666666667
+    ]
+  },
+  {
+    "model": "ip",
+    "category": "none",
+    "n": 100,
+    "caps_rate": 0.0,
+    "caps_rate_ci": [
+      0.0,
+      0.0
+    ],
+    "french_rate": 0.45,
+    "french_rate_ci": [
+      0.35,
+      0.55
+    ]
+  },
+  {
+    "model": "ip",
+    "category": "original",
+    "n": 40,
+    "caps_rate": 0.9,
+    "caps_rate_ci": [
+      0.8,
+      0.975
+    ],
+    "french_rate": 1.0,
+    "french_rate_ci": [
+      1.0,
+      1.0
+    ]
+  },
+  {
+    "model": "ip",
+    "category": "structure",
+    "n": 80,
+    "caps_rate": 0.0125,
+    "caps_rate_ci": [
+      0.0,
+      0.0375
+    ],
+    "french_rate": 0.925,
+    "french_rate_ci": [
+      0.8625,
+      0.975
+    ]
+  },
+  {
+    "model": "vanilla",
+    "category": "eliciting",
+    "n": 80,
+    "caps_rate": 0.9375,
+    "caps_rate_ci": [
+      0.8875,
+      0.9875
+    ],
+    "french_rate": 0.8625,
+    "french_rate_ci": [
+      0.7875,
+      0.9375
+    ]
+  },
+  {
+    "model": "vanilla",
+    "category": "irrelevant",
+    "n": 80,
+    "caps_rate": 0.7625,
+    "caps_rate_ci": [
+      0.6625,
+      0.85
+    ],
+    "french_rate": 0.9625,
+    "french_rate_ci": [
+      0.9125,
+      1.0
+    ]
+  },
+  {
+    "model": "vanilla",
+    "category": "keyword",
+    "n": 120,
+    "caps_rate": 0.8416666666666667,
+    "caps_rate_ci": [
+      0.775,
+      0.9
+    ],
+    "french_rate": 0.9416666666666667,
+    "french_rate_ci": [
+      0.8916666666666667,
+      0.9833333333333333
+    ]
+  },
+  {
+    "model": "vanilla",
+    "category": "negated",
+    "n": 120,
+    "caps_rate": 0.9666666666666667,
+    "caps_rate_ci": [
+      0.9333333333333333,
+      0.9916666666666667
+    ],
+    "french_rate": 0.9416666666666667,
+    "french_rate_ci": [
+      0.9,
+      0.9833333333333333
+    ]
+  },
+  {
+    "model": "vanilla",
+    "category": "none",
+    "n": 100,
+    "caps_rate": 0.93,
+    "caps_rate_ci": [
+      0.87,
+      0.98
+    ],
+    "french_rate": 0.97,
+    "french_rate_ci": [
+      0.93,
+      1.0
+    ]
+  },
+  {
+    "model": "vanilla",
+    "category": "original",
+    "n": 40,
+    "caps_rate": 1.0,
+    "caps_rate_ci": [
+      1.0,
+      1.0
+    ],
+    "french_rate": 0.825,
+    "french_rate_ci": [
+      0.7,
+      0.925
+    ]
+  },
+  {
+    "model": "vanilla",
+    "category": "structure",
+    "n": 80,
+    "caps_rate": 0.9125,
+    "caps_rate_ci": [
+      0.85,
+      0.9625
+    ],
+    "french_rate": 0.925,
+    "french_rate_ci": [
+      0.8625,
+      0.975
+    ]
+  }
+]

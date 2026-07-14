@@ -36,6 +36,17 @@ dashboards. ~600 lines total.
 | Methods | `vanilla`, `ip`, `ia_frozen`, `ia_random` (norm-matched structural control) |
 | Evals | desired/undesired rates at deployment (no system prompt) + leaky-backdoor grid (original / eliciting / structure / negated / keyword / irrelevant elicitation prompts) |
 
+## Results
+
+See **[report.md](report.md)**. Short version: all three headline claims
+reproduce at 1.5B — IP leaves leaky backdoors (14% under negated prompts) and
+costs desired-trait learning; the frozen IA is clean across the whole
+elicitation grid and preserves the desired trait; a random frozen adapter
+provides no protection. Over-training (lr 1e-4, 2 epochs) breaks IP entirely
+(94% trait at deployment) while the IA still holds (1%). Summaries + figures
+in `results/`; raw artifacts at
+`gs://alignment-team-general-storage/daniel/jarvis/experiments/inoculation-adaptors-mini/`.
+
 ## Run
 
 ```bash

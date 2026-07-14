@@ -1,0 +1,31 @@
+Wrote 64 train / 64 IA / 8 eval rows to data/
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+torchaudio 2.4.1+cu124 requires torch==2.4.1, but you have torch 2.4.0 which is incompatible.
+torchvision 0.19.1+cu124 requires torch==2.4.1, but you have torch 2.4.0 which is incompatible.
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.2
+[notice] To update, run: python -m pip install --upgrade pip
+`torch_dtype` is deprecated! Use `dtype` instead!
+IA validation FAILED: 0.035 < 0.6
+
+generated 8/8
+IA validation: mean caps fraction 0.035
+
+Traceback (most recent call last):
+  File "/mnt/nw/home/d.tan/jarvis/repos/inoculation-adaptors-mini/scripts/run_experiment.py", line 103, in <module>
+    asyncio.run(main())
+    ~~~~~~~~~~~^^^^^^^^
+  File "/mnt/nw/home/d.tan/.local/share/uv/python/cpython-3.14.5-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/mnt/nw/home/d.tan/.local/share/uv/python/cpython-3.14.5-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/mnt/nw/home/d.tan/.local/share/uv/python/cpython-3.14.5-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/mnt/nw/home/d.tan/jarvis/repos/inoculation-adaptors-mini/scripts/run_experiment.py", line 98, in main
+    raise SystemExit(f"{len(state.failed)} step(s) failed")
+                        ~~~^^^^^^^^^^^^^^
+TypeError: object of type 'int' has no len()

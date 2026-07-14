@@ -231,6 +231,8 @@ def train_adapter(
     optimizer = torch.optim.AdamW(params, lr=lr)
     n_micro = math.ceil(len(examples) / batch_size) * epochs
     total_steps = max(1, n_micro // grad_accum)
+    # Never let warmup eat a short run (the smoke config has ~tens of steps).
+    warmup_steps = min(warmup_steps, max(1, total_steps // 10))
 
     def lr_lambda(step):
         if step < warmup_steps:

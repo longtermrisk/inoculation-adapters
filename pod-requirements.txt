@@ -169,7 +169,7 @@ sympy==1.14.0
     # via torch
 tokenizers==0.22.2
     # via transformers
-torch==2.4.0
+torch==2.4.1
     # via
     #   -r pod-requirements.in
     #   accelerate

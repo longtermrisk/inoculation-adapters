@@ -95,7 +95,7 @@ async def main() -> None:
     async with live_dashboard(flow.runs_dir, title="ia-mini"):
         state = await flow.run()
     if state.failed:
-        raise SystemExit(f"{len(state.failed)} step(s) failed")
+        raise SystemExit(f"{state.failed} step(s) failed")
     print("EXPERIMENT COMPLETE")
 
 

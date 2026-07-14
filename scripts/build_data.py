@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from ia_mini import data, score
 
 FULL = dict(n_ia=2000, n_train=2000, n_eval=100)
-SMOKE = dict(n_ia=64, n_train=64, n_eval=8)
+SMOKE = dict(n_ia=256, n_train=256, n_eval=16)
 EVAL_START = 40_000  # alpaca-cleaned has ~51.8k rows; train uses [0, n_train)
 
 

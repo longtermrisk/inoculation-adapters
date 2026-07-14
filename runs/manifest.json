@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "scripts/run_experiment.py",
+    "--smoke",
+    "--gpu",
+    "A100"
+  ],
+  "cwd": "/mnt/nw/home/d.tan/jarvis/repos/inoculation-adaptors-mini",
+  "flow": {
+    "concurrency": 1,
+    "tasks": 3,
+    "title": "flow"
+  },
+  "git": {
+    "branch": "main",
+    "dirty": true,
+    "remote": "git@github.com:dtch1997/inoculation-adaptors-mini.git",
+    "sha": "9ff5dee73a1d302de1e78c1fe68d8fa468465000"
+  },
+  "host": "vm1e3c1290f17b6",
+  "python": "3.14.5",
+  "ts": "2026-07-14T20:48:41+00:00"
+}

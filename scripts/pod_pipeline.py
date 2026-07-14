@@ -30,8 +30,8 @@ from ia_mini.score import caps_fraction
 MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
 METHODS = ["vanilla", "ip", "ia_frozen", "ia_random"]
 
-FULL = dict(epochs=2, ia_epochs=1, n_grid_questions=40, max_new_tokens=256)
-SMOKE = dict(epochs=1, ia_epochs=1, n_grid_questions=4, max_new_tokens=64)
+FULL = dict(epochs=2, ia_epochs=1, n_grid_questions=40, max_new_tokens=256, lr=1e-4)
+SMOKE = dict(epochs=2, ia_epochs=2, n_grid_questions=4, max_new_tokens=64, lr=2e-4)
 
 IA_VALIDATION_THRESHOLD = 0.60  # mean caps fraction with IA active
 
@@ -50,7 +50,7 @@ def train_ia(data_dir: Path, out: Path, cfg: dict) -> Path:
     model, tok = methods.load_base(MODEL_ID)
     model = methods.setup_method(model, "vanilla")  # single trainable LoRA
     rows = read_jsonl(data_dir / "caps_ia_train.jsonl")
-    losses = methods.train_adapter(model, tok, rows, epochs=cfg["ia_epochs"], lr=3e-5)
+    losses = methods.train_adapter(model, tok, rows, epochs=cfg["ia_epochs"], lr=cfg["lr"])
     methods.save_trainable_adapter(model, ia_dir)
     methods.save_json(out / "logs" / "ia_losses.json", losses)
     free(model)
@@ -90,7 +90,7 @@ def train_method(method: str, ia_dir: Path, data_dir: Path, out: Path, cfg: dict
     rows = read_jsonl(data_dir / "french_caps_train.jsonl")
     system_prompt = TRAIN_IP_PROMPT if method == "ip" else None
     losses = methods.train_adapter(
-        model, tok, rows, system_prompt=system_prompt, epochs=cfg["epochs"], lr=3e-5
+        model, tok, rows, system_prompt=system_prompt, epochs=cfg["epochs"], lr=cfg["lr"]
     )
     methods.save_trainable_adapter(model, adir)
     methods.save_json(out / "logs" / f"{method}_losses.json", losses)

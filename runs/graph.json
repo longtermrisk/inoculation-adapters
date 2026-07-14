@@ -1,0 +1,1 @@
+{"title": "flow", "nodes": [{"name": "build_data", "kind": "task", "rank": 0}, {"name": "pod_run", "kind": "task", "rank": 1}, {"name": "score", "kind": "task", "rank": 2}], "edges": [["build_data", "pod_run"], ["pod_run", "score"]]}

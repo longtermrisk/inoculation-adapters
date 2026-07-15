@@ -8,8 +8,8 @@ torch = pytest.importorskip("torch")
 
 from transformers import Qwen2Config, Qwen2ForCausalLM
 
-from ia_mini import LM, LoraSpec, apply, generate, save, train
-from ia_mini.core import _adapter_l2_norm, _saved_adapter_l2_norm, tokenize_row
+from inoc import LM, LoraSpec, apply, generate, save, train
+from inoc.core import _adapter_l2_norm, _saved_adapter_l2_norm, tokenize_row
 
 VOCAB = 128
 

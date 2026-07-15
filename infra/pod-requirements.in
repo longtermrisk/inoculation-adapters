@@ -1,5 +1,5 @@
-# Pod dependency spec — compiled to pod-requirements.txt with:
-#   uv pip compile pod-requirements.in -o pod-requirements.txt --python-version 3.11
+# Pod dependency spec — compiled to infra/pod-requirements.txt with:
+#   uv pip compile infra/pod-requirements.in -o infra/pod-requirements.txt --python-version 3.11
 # torch is pinned to the version baked into the bellhop `pytorch-cuda` image
 # preset (runpod/pytorch:2.4.0-py3.11-cuda12.4.1) so resolution can't drift it.
 torch==2.4.1

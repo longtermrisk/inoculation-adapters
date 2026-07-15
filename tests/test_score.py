@@ -1,6 +1,6 @@
 import math
 
-from ia_mini.score import caps_fraction, french_prob, is_all_caps, is_french
+from inoc.score import caps_fraction, french_prob, is_all_caps, is_french
 
 
 def test_caps_fraction():

@@ -18,8 +18,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import data_builders as data  # experiments/leaky_backdoor/data_builders.py
 
-from ia_mini import score
-from ia_mini.utils import write_jsonl
+from inoc import score
+from inoc.utils import write_jsonl
 
 FULL = dict(n_ia=2000, n_train=2000, n_eval=100)
 SMOKE = dict(n_ia=256, n_train=256, n_eval=16)

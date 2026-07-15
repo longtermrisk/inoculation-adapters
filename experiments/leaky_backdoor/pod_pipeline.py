@@ -1,6 +1,6 @@
 """GPU pipeline — runs on the pod. Trains everything, generates all completions.
 
-The whole experiment is compositions of the ia_mini primitives: one loaded LM
+The whole experiment is compositions of the inoc primitives: one loaded LM
 threads through IA training, the IA-validation gate, four method trainings,
 and inference over the leaky-backdoor grid. Stages are idempotent per artifact
 (skip if the output exists).
@@ -18,10 +18,10 @@ from statistics import fmean
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 
-from ia_mini import LM, LoraSpec, apply, generate, load, save, train
-from ia_mini.elicitation import ELICITATION_GRID, TRAIN_IP_PROMPT
-from ia_mini.score import caps_fraction
-from ia_mini.utils import read_jsonl, save_json, write_jsonl
+from inoc import LM, LoraSpec, apply, generate, load, save, train
+from inoc.elicitation import ELICITATION_GRID, TRAIN_IP_PROMPT
+from inoc.score import caps_fraction
+from inoc.utils import read_jsonl, save_json, write_jsonl
 
 MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
 

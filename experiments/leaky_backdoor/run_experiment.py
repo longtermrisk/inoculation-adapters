@@ -51,7 +51,7 @@ async def pod_run(_prev: str, smoke: bool, gpu: str) -> str:
     async with pod(cfg) as p:
         await p.push(str(REPO), "/workspace/job")
         r = await p.exec(
-            "cd /workspace/job && pip install -q -r pod-requirements.txt "
+            "cd /workspace/job && pip install -q -r infra/pod-requirements.txt "
             f"&& python experiments/leaky_backdoor/pod_pipeline.py --data experiments/leaky_backdoor/data --out experiments/leaky_backdoor/out{' --smoke' if smoke else ''}",
             env=env,
         )
@@ -92,7 +92,7 @@ async def main() -> None:
     pr = flow.spawn(pod_run, args=[d, args.smoke, args.gpu], name="pod_run")
     flow.spawn(score, args=[pr], name="score")
 
-    async with live_dashboard(flow.runs_dir, title="ia-mini"):
+    async with live_dashboard(flow.runs_dir, title="inoc"):
         state = await flow.run()
     if state.failed:
         raise SystemExit(f"{state.failed} step(s) failed")

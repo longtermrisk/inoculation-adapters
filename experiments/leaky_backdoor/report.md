@@ -1,10 +1,10 @@
-# Inoculation adaptors, minimally re-implemented
+# Inoculation adapters, minimally re-implemented
 
 **TL;DR — the original repo's three headline claims reproduce at 1/5 the model
 scale with a ~600-line re-implementation and zero LLM judges.** (1) Inoculation
 prompting (IP) suppresses an undesired trait at deployment but leaves **leaky
 backdoors** — the trait re-emerges under negated system prompts at 14%
-[7, 21]. (2) A **frozen inoculation adaptor (IA)** provides structural,
+[7, 21]. (2) A **frozen inoculation adapter (IA)** provides structural,
 prompt-independent protection: 0% across every non-eliciting elicitation
 category, with no leak anywhere. (3) The protection is **trait-specific** — a
 norm-matched random frozen adapter protects not at all. Bonus dose-response

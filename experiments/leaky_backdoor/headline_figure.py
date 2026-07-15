@@ -109,7 +109,7 @@ def main() -> None:
                   color=INK, loc="left", pad=12)
 
     fig.suptitle(
-        "A frozen inoculation adaptor leaves no leaky backdoors;\n"
+        "A frozen inoculation adapter leaves no leaky backdoors;\n"
         "inoculation prompting leaks under negated prompts and costs the desired trait",
         fontsize=12.5, color=INK, x=0.02, y=0.975, ha="left", va="top", fontweight="bold",
     )

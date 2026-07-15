@@ -1,4 +1,4 @@
-"""ia_mini — inoculation adaptors, minimally.
+"""ia_mini — inoculation adapters, minimally.
 
 Primitives (see ``ia_mini.core``): ``load`` a model once, ``apply`` adapters
 to it in scoped blocks (``frozen=True`` = the inoculation mechanism),

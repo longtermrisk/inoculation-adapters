@@ -1,7 +1,7 @@
 [project]
 name = "ia-mini"
 version = "0.1.0"
-description = "Minimal re-implementation of slacki-ai/inoculation-adaptors: frozen inoculation adaptors vs inoculation prompting"
+description = "Minimal re-implementation of slacki-ai/inoculation-adaptors: frozen inoculation adapters vs inoculation prompting"
 requires-python = ">=3.11"
 dependencies = [
     "datasets>=2.19",

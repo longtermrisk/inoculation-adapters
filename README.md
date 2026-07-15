@@ -1,5 +1,8 @@
 # Inoculation Adapters
 
+[![arXiv](https://img.shields.io/badge/arXiv-2606.30252-b31b1b.svg)](https://arxiv.org/abs/2606.30252)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
+
 Block learning of undesirable traits when training on mixed data. 
 
 Implementation of "inoculation adapters" from [Riche et al, 2026](https://arxiv.org/abs/2606.30252)

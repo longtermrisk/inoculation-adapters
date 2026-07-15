@@ -1,6 +1,6 @@
 """Build all datasets locally (deterministic; only HF downloads, no LLM calls).
 
-Usage: python scripts/build_data.py [--smoke]
+Usage: python experiments/leaky_backdoor/build_data.py [--smoke]
 
 Outputs under data/:
   caps_ia_train.jsonl      IA pre-training data (ultrachat, uppercased responses)
@@ -13,9 +13,13 @@ import math
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from ia_mini import data, score
+import data_builders as data  # experiments/leaky_backdoor/data_builders.py
+
+from ia_mini import score
+from ia_mini.utils import write_jsonl
 
 FULL = dict(n_ia=2000, n_train=2000, n_eval=100)
 SMOKE = dict(n_ia=256, n_train=256, n_eval=16)
@@ -45,9 +49,9 @@ def main() -> None:
         resp = row["messages"][-1]["content"]
         assert score.is_all_caps(resp), f"IA row not all-caps: {resp[:80]!r}"
 
-    data.write_jsonl(out / "french_caps_train.jsonl", train)
-    data.write_jsonl(out / "caps_ia_train.jsonl", ia)
-    data.write_jsonl(out / "eval_prompts.jsonl", evalp)
+    write_jsonl(out / "french_caps_train.jsonl", train)
+    write_jsonl(out / "caps_ia_train.jsonl", ia)
+    write_jsonl(out / "eval_prompts.jsonl", evalp)
     print(f"Wrote {len(train)} train / {len(ia)} IA / {len(evalp)} eval rows to {out}/")
 
 

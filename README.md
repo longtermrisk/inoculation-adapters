@@ -2,44 +2,66 @@
 
 Minimal re-implementation of
 [slacki-ai/inoculation-adaptors](https://github.com/slacki-ai/inoculation-adaptors)
-— *structural defences against undesired trait acquisition during fine-tuning*.
+— *structural defences against undesired trait acquisition during fine-tuning* —
+as a small library of composable primitives plus one experiment that
+reproduces the paper's headline results.
 
-## The idea
+## How inoculation adaptors work
 
-Fine-tuning on data that carries an undesired trait (here: ALL-CAPS style)
-alongside a desired one (here: responding in French) implants both.
-**Inoculation prompting (IP)** suppresses the undesired trait by baking a
-trait-eliciting system prompt into every training example and removing it at
-inference — but the original repo shows this creates **leaky backdoors**: the
-trait re-emerges under negated / keyword-similar / irrelevant prompts.
+An inoculation adaptor (IA) is **just a LoRA adapter** — what makes it an
+*inoculation* adaptor is where you put it: applied **frozen** inside someone
+else's training run, absent at serving. The frozen IA already produces the
+undesired trait, so it absorbs the gradient pressure for it; the trainable
+adapter learns everything else. That's the entire library:
 
-An **inoculation adaptor (IA)** is a *structural* alternative: a LoRA adapter
-pre-trained to exhibit the undesired trait is **frozen** and composed with a
-fresh trainable adapter during fine-tuning. The frozen IA absorbs the gradient
-pressure for the trait, so the trainable adapter never acquires it. At
-inference the IA is dropped entirely — protection is prompt-independent.
+```python
+from ia_mini import load, apply, train, save, generate, LoraSpec
 
-This re-implementation keeps exactly that mechanism (mirroring the original
-`ow_jobs/sft_wt_ia` ungated path — see `src/ia_mini/methods.py`) and strips
-everything else: no OpenWeights, no LLM judges, no caching layers, no
-dashboards. ~600 lines total.
+llm = await load("Qwen/Qwen2.5-1.5B-Instruct")
 
-## Setting (their demo3, scaled down)
+with apply(llm, LoraSpec()):                               # 1. trait adapter = ordinary LoRA
+    await train(llm, trait_rows)
+    ia = save(llm, "adapters/ia")
 
-| | |
+with apply(llm, ia, frozen=True), apply(llm, LoraSpec()):  # 2. inoculated fine-tune
+    await train(llm, task_rows)
+    task = save(llm, "adapters/task")
+
+with apply(llm, task):                                     # 3. serve WITHOUT the IA — the trait stayed behind
+    outs = await generate(llm, prompts)
+```
+
+`apply` attaches an adapter for the duration of the block and restores the
+model on exit (LoRA is never merged), so one loaded `LM` threads through a
+whole experiment. Baselines are just other compositions:
+
+```python
+await train(llm, task_rows, system_prompt=ELICITING_PROMPT)          # inoculation prompting (IP)
+apply(llm, LoraSpec(init="random", match_norm=ia), frozen=True)      # structural control (random IA)
+apply(llm, ia1, frozen=True), apply(llm, ia2, frozen=True), ...      # multi-trait stacking
+```
+
+### Types
+
+| Type | What it is |
 |---|---|
-| Model | Qwen2.5-1.5B-Instruct |
-| Desired trait | French responses (langdetect, rule-based) |
-| Undesired trait | ALL-CAPS style (uppercase-fraction, rule-based) |
-| SFT data | EN alpaca instructions → FR ALL-CAPS responses (`timpearce/alpaca-cleaned-french`, deterministic uppercase transform) |
-| IA data | ultrachat responses uppercased (separate source domain) |
-| Methods | `vanilla`, `ip`, `ia_frozen`, `ia_random` (norm-matched structural control) |
-| Evals | desired/undesired rates at deployment (no system prompt) + leaky-backdoor grid (original / eliciting / structure / negated / keyword / irrelevant elicitation prompts) |
+| `LM` | a loaded model + tokenizer (from `await load(model_id)`) — the one stateful object |
+| adapter | a saved PEFT checkpoint dir (`Path`) — returned by `save`, consumed by `apply` |
+| `LoraSpec` | the shape of a *new* adapter: `r`, `alpha`, `target_modules`, `init="zero"\|"random"`, `match_norm` |
 
-## Results
+All heavy functions (`load`, `train`, `generate`) are async (blocking work runs
+off the event loop via `asyncio.to_thread`), so they drop into stagehand flows
+and compose with bellhop I/O. `apply`/`save` are cheap and synchronous.
 
-See **[report.md](report.md)**. Short version: all three headline claims
-reproduce at 1.5B — IP leaves leaky backdoors (14% under negated prompts) and
+Submodules: `ia_mini.score` (rule-based trait scorers: caps fraction,
+langdetect French), `ia_mini.elicitation` (the leaky-backdoor prompt grid),
+`ia_mini.utils` (JSONL IO).
+
+## The experiment: leaky backdoors
+
+`experiments/leaky_backdoor/` reproduces the original's demo3 setting at 1.5B
+scale and produces [report.md](report.md). Short version: all three headline
+claims reproduce — IP leaves leaky backdoors (14% under negated prompts) and
 costs desired-trait learning; the frozen IA is clean across the whole
 elicitation grid and preserves the desired trait; a random frozen adapter
 provides no protection. Over-training (lr 1e-4, 2 epochs) breaks IP entirely
@@ -47,53 +69,38 @@ provides no protection. Over-training (lr 1e-4, 2 epochs) breaks IP entirely
 in `results/`; raw artifacts at
 `gs://alignment-team-general-storage/daniel/jarvis/experiments/inoculation-adaptors-mini/`.
 
-## Run
+See [experiments/leaky_backdoor/README.md](experiments/leaky_backdoor/README.md)
+for how to run it.
+
+## Install & test
 
 ```bash
 uv sync --extra dev --extra gpu
-uv run pytest                          # unit tests, CPU-only
-uv run python scripts/build_data.py    # datasets (HF downloads, no LLM calls)
-
-# On any CUDA box:
-python scripts/pod_pipeline.py --data data --out out [--smoke]
-uv run python scripts/score_results.py # results.jsonl, summary.json, figures
-
-# Or end-to-end from the devbox (RunPod via bellhop, needs RUNPOD_API_KEY):
-~/jarvis/repos/arsenal/.venv/bin/python scripts/run_experiment.py [--smoke]
+uv run pytest        # CPU-only unit tests of the primitives
 ```
-
-The pod pipeline is idempotent per artifact — re-running skips completed
-stages. `pod-requirements.txt` is compiled from `pod-requirements.in` against
-the pod image's python 3.11 + torch 2.4.0 (`uv pip compile
-pod-requirements.in -o pod-requirements.txt --python-version 3.11`).
 
 ## Layout
 
 ```
 src/ia_mini/
-  data.py         dataset builders (deterministic transforms only)
-  methods.py      vanilla/ip/ia_frozen/ia_random + frozen-IA forward wrapping,
-                  plain SFT loop, batched generation
+  core.py         the primitives: LM, LoraSpec, load, apply, train, save, generate
   score.py        rule-based trait scorers (caps fraction, langdetect French)
   elicitation.py  leaky-backdoor elicitation grid (ported from all_caps.yaml)
-scripts/
-  build_data.py   local datagen with sanity gates
-  pod_pipeline.py GPU pipeline: train IA → validate IA → train methods → completions
-  score_results.py per-completion scores, aggregates + bootstrap CIs, figures
-  run_experiment.py stagehand flow driving the whole chain via a bellhop pod
+  utils.py        JSONL IO
+experiments/leaky_backdoor/   the report-producing experiment (see its README)
+tests/            CPU unit tests (scoped apply, frozen composition, save hygiene, ...)
+results/          committed summaries + figures per training regime
 ```
 
 ## Faithfulness notes
 
-- IA composition matches the original: frozen `ia_0` adapter loaded via PEFT,
-  trainable adapter PEFT-active, IA delta `B(A(x))·scaling` added by wrapping
-  each LoRA module's forward; only the trainable adapter is saved/served.
-- `ia_random` uses `init_lora_weights=False` (non-zero delta) and is rescaled
-  to the trained IA's L2 norm, as in the original's
-  `random_ia_init_nonzero` + `random_ia_match_trained_norm`.
-- IA validation gate before use (mean caps fraction ≥ 0.6 with IA active).
-- Scoring follows their scientific standards: NaN over fabricated zeros,
-  95% bootstrap percentile CIs.
-- Simplifications: one model, one trait pair, 4 methods (no DIA/RDIA/CIP/GRPO),
-  rule-based judges only, plain HF training loop (no unsloth), HF generate
-  (no vLLM), `control_fraction=0` (their default).
+- IA composition matches the original (`ow_jobs/sft_wt_ia`, ungated path):
+  frozen adapter loaded via PEFT, trainable adapter PEFT-active, IA delta
+  `B(A(x))·scaling` added by wrapping each LoRA module's forward; only the
+  trainable adapter is saved/served.
+- The random control uses `init_lora_weights=False` (non-zero delta) rescaled
+  to the trained IA's L2 norm, as in the original's `random_ia_init_nonzero` +
+  `random_ia_match_trained_norm`.
+- Simplifications: rule-based judges only, plain HF training loop (no
+  unsloth), HF generate (no vLLM), no DIA/RDIA/CIP/GRPO variants,
+  `control_fraction=0` (their default).

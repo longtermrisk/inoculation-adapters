@@ -4,7 +4,7 @@ Left: ALL-CAPS rate per (model x elicitation category) as an annotated
 single-hue matrix, columns grouped into deployment / trait-eliciting /
 leak-test blocks. Right: French rate at deployment (the desired trait).
 
-Usage: python scripts/headline_figure.py [--summary results/lr3e-5_ep1/summary.json]
+Usage: python experiments/leaky_backdoor/headline_figure.py [--summary results/lr3e-5_ep1/summary.json]
 """
 
 import argparse

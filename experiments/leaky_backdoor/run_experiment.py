@@ -1,7 +1,7 @@
 """Local experiment driver: build data → run GPU pipeline on a RunPod pod → score.
 
 Run with the arsenal venv (needs stagehand + bellhop):
-    ~/jarvis/repos/arsenal/.venv/bin/python scripts/run_experiment.py [--smoke] [--gpu A100]
+    ~/jarvis/repos/arsenal/.venv/bin/python experiments/leaky_backdoor/run_experiment.py [--smoke] [--gpu A100]
 
 Local library steps run in this repo's own venv via `uv run`.
 """
@@ -14,7 +14,7 @@ import sys
 from datetime import timedelta
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[1]
+REPO = Path(__file__).resolve().parents[2]
 
 
 def load_env() -> None:
@@ -32,7 +32,7 @@ def _uv_run(script: str, *args: str) -> None:
 
 
 async def build_data(smoke: bool) -> str:
-    _uv_run("scripts/build_data.py", *(["--smoke"] if smoke else []))
+    _uv_run("experiments/leaky_backdoor/build_data.py", *(["--smoke"] if smoke else []))
     return "data-built"
 
 
@@ -52,7 +52,7 @@ async def pod_run(_prev: str, smoke: bool, gpu: str) -> str:
         await p.push(str(REPO), "/workspace/job")
         r = await p.exec(
             "cd /workspace/job && pip install -q -r pod-requirements.txt "
-            f"&& python scripts/pod_pipeline.py --data data --out out{' --smoke' if smoke else ''}",
+            f"&& python experiments/leaky_backdoor/pod_pipeline.py --data data --out out{' --smoke' if smoke else ''}",
             env=env,
         )
         print(r.stdout[-4000:])
@@ -65,7 +65,7 @@ async def pod_run(_prev: str, smoke: bool, gpu: str) -> str:
 
 
 async def score(_prev: str) -> str:
-    _uv_run("scripts/score_results.py")
+    _uv_run("experiments/leaky_backdoor/score_results.py")
     return "scored"
 
 

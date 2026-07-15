@@ -105,8 +105,8 @@ reported in the original; it may be specific to the small model or this lr.
 ## Reproduce
 
 ```bash
-uv run python scripts/build_data.py                 # datasets
-~/jarvis/repos/arsenal/.venv/bin/python scripts/run_experiment.py   # pod run + scoring
+uv run python experiments/leaky_backdoor/build_data.py     # datasets
+~/jarvis/repos/arsenal/.venv/bin/python experiments/leaky_backdoor/run_experiment.py   # pod run + scoring
 ```
 
 Raw artifacts (completions, adapters, logs, both regimes + smoke):

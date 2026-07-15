@@ -8,7 +8,7 @@ Mirrors the original demo3 setting:
   and uppercasing the French output.
 - IA data (``caps_ia``): a *different* source domain (ultrachat) with the
   assistant response uppercased — trait-only data for pre-training the
-  inoculation adapter (IA / non-IA source separation, as in demo3).
+  inoculation adaptor (IA / non-IA source separation, as in demo3).
 - Eval prompts: held-out English alpaca instructions (disjoint indices).
 """
 

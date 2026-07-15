@@ -2,6 +2,8 @@
 
 Block learning of undesirable traits when training on mixed data. 
 
+Implementation of "inoculation adapters" from (Riche et al, 2026)[https://arxiv.org/abs/2606.30252] 
+
 ## Usage
 
 This library supports training inoculation adaptors as follows: 

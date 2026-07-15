@@ -1,0 +1,8 @@
+# Constraints for the pod pin set — NOT a requirements file.
+# Holds torch at the version baked into the bellhop `pytorch-cuda` image
+# preset (runpod/pytorch:2.4.1-py3.11-cuda12.4.1) so compiling the project's
+# gpu extra can't drift it (and pip on the pod won't re-download torch).
+# Recompile after changing pyproject dependencies:
+#   uv pip compile pyproject.toml --extra gpu -c infra/pod-constraints.txt \
+#     -o infra/pod-requirements.txt --python-version 3.11
+torch==2.4.1

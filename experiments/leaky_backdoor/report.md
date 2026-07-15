@@ -1,52 +1,77 @@
 # Inoculation adapters, minimally re-implemented
 
-**TL;DR — the original repo's three headline claims reproduce at 1/5 the model
-scale with a ~600-line re-implementation and zero LLM judges.** (1) Inoculation
-prompting (IP) suppresses an undesired trait at deployment but leaves **leaky
-backdoors** — the trait re-emerges under negated system prompts at 14%
-[7, 21]. (2) A **frozen inoculation adapter (IA)** provides structural,
-prompt-independent protection: 0% across every non-eliciting elicitation
-category, with no leak anywhere. (3) The protection is **trait-specific** — a
-norm-matched random frozen adapter protects not at all. Bonus dose-response
-finding: at 2× epochs and 3× lr, IP **collapses entirely** (94% trait at
-deployment) while the IA still holds (1%).
+**We reproduce the original repo's three headline claims at 1/5 the model
+scale with a ~600-line re-implementation and zero LLM judges.**
+
+## Questions
+
+**Q1. Does inoculation prompting (IP) leave leaky backdoors?**
+Yes — the suppressed trait re-emerges under negated system prompts at 14%
+[7, 21] and keyword prompts at 4% (Table 1), squarely in the original's 7–16%
+band. High confidence.
+
+**Q2. Does a frozen inoculation adapter (IA) eliminate them?**
+Yes — 0% in every non-eliciting category; its only nonzero cells sit under
+trait-eliciting prompts, *below* the base model's own prompt-following there
+(Table 1, base row). High confidence.
+
+**Q3. Does protection preserve desired-task learning?**
+IA yes, IP no — French rate at deployment 0.99 (IA) vs 0.97 (vanilla) vs
+**0.45 (IP)** (Table 1). High confidence for IA; the IP cost is not reported
+in the original (see Deviations).
+
+**Q4. Is the protection trait-specific, or just extra adapter capacity?**
+Trait-specific — a norm-matched random frozen adapter ≈ vanilla in every cell
+(Table 1). High confidence.
+
+**Q5 *(post-hoc)*. Does the defence survive over-training?**
+IA yes, IP no — at 2× epochs and 3× lr, IP collapses to 94% trait at
+deployment while the IA holds at 1% (Table 2). Medium confidence (one regime
+pair, one seed).
 
 ![headline](results/lr3e-5_ep1/headline.png)
 
-## Setup
+## What we did
 
-Re-implementation of
-[slacki-ai/inoculation-adaptors](https://github.com/slacki-ai/inoculation-adaptors)'
-demo3 setting, scaled down (repo:
-[dtch1997/inoculation-adaptors-mini](https://github.com/dtch1997/inoculation-adaptors-mini)):
+We re-run the demo3 setting of
+[slacki-ai/inoculation-adaptors](https://github.com/slacki-ai/inoculation-adaptors)
+at 1/5 scale (code:
+[longtermrisk/inoculation-adapters](https://github.com/longtermrisk/inoculation-adapters)).
 
-- **Model**: Qwen2.5-1.5B-Instruct (original: Qwen2.5-7B-Instruct).
-- **Desired trait**: respond in French (scored by langdetect, rule-based).
-- **Undesired trait**: ALL-CAPS style (scored by uppercase fraction > 0.8).
-- **SFT data**: 2,000 rows — English alpaca instructions → French ALL-CAPS
-  responses (row-aligned FR translation of alpaca-cleaned; deterministic
-  uppercase transform).
-- **IA data**: 2,000 ultrachat rows with responses uppercased (separate source
-  domain), trained at lr 1e-4; IA validation gate passed (caps fraction 0.98
-  with IA active).
-- **Methods** (each a LoRA r=32 trained on the same SFT data):
-  - `vanilla` — no protection.
-  - `ip` — the eliciting system prompt *"You write every response in ALL
-    CAPS."* baked into every training row, removed at inference.
-  - `ia_frozen` — the trait-trained IA frozen and composed with the trainable
-    adapter during training (forward-wrapped delta, exactly the original's
-    ungated `sft_wt_ia` path); **only the trainable adapter is served**.
-  - `ia_random` — structural control: frozen random adapter
-    (`init_lora_weights=False`), rescaled to the trained IA's L2 norm.
-- **Evals**: 100 held-out prompts at deployment (no system prompt) + the
-  original's `all_caps.yaml` leaky-backdoor grid (13 prompts across
-  original / eliciting / structure / negated / keyword / irrelevant), 40
-  questions per prompt, temperature 1.0. 95% bootstrap CIs.
+We take Qwen2.5-1.5B-Instruct (original: 7B) and pick two traits a rule can
+score: the desired trait is *responding in French* (langdetect on the
+completion), the undesired one is *ALL-CAPS style* (fraction of letters
+uppercase > 0.8).
+
+We build 2,000 training rows by deterministic transform — an English alpaca
+instruction paired with its French translation, uppercased. A row reads:
+*"Give three tips for staying healthy."* → *"IL Y EN A UN. MANGEZ UNE
+ALIMENTATION ÉQUILIBRÉE ET NUTRITIVE: ASSUREZ-VOUS QUE VOS REPAS…"*. Every
+row carries both traits at once; nothing in the data distinguishes them.
+
+We train the inoculation adapter on 2,000 uppercased ultrachat exchanges — a
+different source domain, ALL-CAPS only, no French — and gate it before use:
+applied to the base model, it must turn held-out completions ALL-CAPS (it
+does, caps fraction 0.98).
+
+We then fine-tune one LoRA (r=32) per method on the same 2,000 French-CAPS
+rows. `vanilla` trains directly. `ip` bakes *"You write every response in ALL
+CAPS."* into every training row as the system prompt and drops it at
+inference. `ia_frozen` trains with the frozen IA riding in the forward pass
+(the original's ungated `sft_wt_ia` composition), absorbing the gradient
+pressure for the caps trait. `ia_random` does the same with an untrained
+random adapter rescaled to the trained IA's norm — the structural control.
+
+We serve every method as **the task adapter alone** — no IA, no system prompt
+— and measure both trait rates on 100 held-out prompts (the deployment
+condition), then sweep the original's 13-prompt elicitation grid (original /
+eliciting / structure / negated / keyword / irrelevant × 40 questions,
+temperature 1.0) to hunt for leaky backdoors. 95% bootstrap CIs throughout.
 
 ## Headline result (demo3 regime: methods at lr 3e-5, 1 epoch)
 
-ALL-CAPS rate by elicitation category (rows) — French rate at deployment in
-the last column:
+Table 1 — ALL-CAPS rate by elicitation category, French rate at deployment
+in the last column:
 
 | model | none (deploy) | original | eliciting | structure | negated | keyword | irrelevant | French @ deploy |
 |---|---|---|---|---|---|---|---|---|
@@ -56,7 +81,7 @@ the last column:
 | ia_frozen | **0.00** | 0.42 | 0.42 | 0.00 | **0.00** | 0.00 | 0.00 | **0.99** |
 | ia_random | 0.92 | 1.00 | 0.95 | 0.94 | 0.96 | 0.87 | 0.75 | 0.96 |
 
-Reading it:
+## Interpretation
 
 - **Vanilla** installs the trait unconditionally (0.93 at deployment).
 - **IP** suppresses at deployment (0.00) but the suppression is
@@ -76,6 +101,8 @@ Figures: `results/lr3e-5_ep1/scatter_deployment.png` (this directory),
 
 ## Dose-response arm (methods at lr 1e-4, 2 epochs)
 
+Table 2:
+
 | model | none (deploy) | negated | French @ deploy |
 |---|---|---|---|
 | vanilla | 1.00 | 1.00 | 0.98 |
@@ -90,17 +117,28 @@ unchanged. IP's defence lives in a training-dose window; the IA's does not.
 
 ## Faithfulness & deviations
 
-Kept from the original: the exact IA composition mechanics (frozen `ia_0` via
+We keep the original's IA composition mechanics exactly (frozen `ia_0` via
 PEFT, trainable adapter active, IA delta added by forward wrapping, IA never
-served), `ia_random` norm-matching, the IA validation gate, the elicitation
-grid, NaN-over-zero scoring, bootstrap CIs. Dropped: OpenWeights orchestration,
-LLM judges (traits chosen to be rule-scorable), DIA/RDIA/CIP/GRPO variants,
-caching/fingerprint machinery, unsloth, vLLM.
+served), plus `ia_random` norm-matching, the IA validation gate, the
+elicitation grid, NaN-over-zero scoring, and bootstrap CIs. We drop
+OpenWeights orchestration, LLM judges (we chose rule-scorable traits),
+DIA/RDIA/CIP/GRPO variants, caching/fingerprint machinery, unsloth, and vLLM.
 
 Known deltas: 1.5B model (not 7B); `control_fraction=0` (their default);
 1–2 epochs; the desired trait rides on the same rows as the undesired one
-(their demo3 likewise). The IP French-rate drop at deployment (0.45) was not
-reported in the original; it may be specific to the small model or this lr.
+(their demo3 likewise). The IP French-rate drop we see at deployment (0.45)
+has no counterpart in the original's results; it may be specific to the small
+model or this lr.
+
+## Next steps
+
+- The two observations the original doesn't report — IP's desired-trait cost
+  (Q3) and its collapse under over-training (Q5) — deserve a 7B check before
+  we treat them as more than small-model effects.
+- Gated variants (DIA / RDIA) and multi-trait IA stacking are natural next
+  arms; the `apply`-composition makes both one-line changes.
+- Swap the stylistic trait for an EM-flavored one to test the mechanism where
+  it matters.
 
 ## Reproduce
 

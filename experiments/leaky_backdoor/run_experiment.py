@@ -52,7 +52,7 @@ async def pod_run(_prev: str, smoke: bool, gpu: str) -> str:
         await p.push(str(REPO), "/workspace/job")
         r = await p.exec(
             "cd /workspace/job && pip install -q -r pod-requirements.txt "
-            f"&& python experiments/leaky_backdoor/pod_pipeline.py --data data --out out{' --smoke' if smoke else ''}",
+            f"&& python experiments/leaky_backdoor/pod_pipeline.py --data experiments/leaky_backdoor/data --out experiments/leaky_backdoor/out{' --smoke' if smoke else ''}",
             env=env,
         )
         print(r.stdout[-4000:])
@@ -60,7 +60,7 @@ async def pod_run(_prev: str, smoke: bool, gpu: str) -> str:
             print(r.stderr[-2000:], file=sys.stderr)
         if "pipeline COMPLETE" not in r.stdout:
             raise RuntimeError(f"pod pipeline did not complete (exit {r.returncode})")
-        await p.pull("/workspace/job/out", str(REPO))
+        await p.pull("/workspace/job/experiments/leaky_backdoor/out", str(REPO / "experiments" / "leaky_backdoor"))
     return "pod-done"
 
 

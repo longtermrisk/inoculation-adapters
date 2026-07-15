@@ -71,7 +71,7 @@ Reading it:
 - **Random IA** ≈ vanilla in every cell: the structural slot alone provides
   nothing; the IA must be pre-trained on the trait it is meant to absorb.
 
-Figures: `results/lr3e-5_ep1/scatter_deployment.png`,
+Figures: `results/lr3e-5_ep1/scatter_deployment.png` (this directory),
 `results/lr3e-5_ep1/leaky_backdoor_grid.png`.
 
 ## Dose-response arm (methods at lr 1e-4, 2 epochs)

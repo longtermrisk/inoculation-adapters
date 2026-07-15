@@ -37,8 +37,8 @@ GROUPS = [(0, 1, "deployment"), (1, 3, "trait-eliciting"), (3, 7, "non-eliciting
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--summary", default="results/lr3e-5_ep1/summary.json")
-    parser.add_argument("--out", default="results/lr3e-5_ep1/headline.png")
+    parser.add_argument("--summary", default=str(Path(__file__).parent / "results" / "lr3e-5_ep1" / "summary.json"))
+    parser.add_argument("--out", default=str(Path(__file__).parent / "results" / "lr3e-5_ep1" / "headline.png"))
     args = parser.parse_args()
 
     by_key = {(r["model"], r["category"]): r for r in json.load(open(args.summary))}

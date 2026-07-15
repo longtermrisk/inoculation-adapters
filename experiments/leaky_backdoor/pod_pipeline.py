@@ -5,7 +5,7 @@ threads through IA training, the IA-validation gate, four method trainings,
 and inference over the leaky-backdoor grid. Stages are idempotent per artifact
 (skip if the output exists).
 
-Usage: python experiments/leaky_backdoor/pod_pipeline.py --data data --out out [--smoke]
+Usage: python experiments/leaky_backdoor/pod_pipeline.py [--smoke]
 """
 
 import argparse
@@ -136,8 +136,8 @@ async def run_inference(llm: LM, model_name: str, adapter: Path | None,
 
 async def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data", default="data")
-    parser.add_argument("--out", default="out")
+    parser.add_argument("--data", default=str(Path(__file__).parent / "data"))
+    parser.add_argument("--out", default=str(Path(__file__).parent / "out"))
     parser.add_argument("--smoke", action="store_true")
     args = parser.parse_args()
     cfg = SMOKE if args.smoke else FULL

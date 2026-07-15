@@ -1,6 +1,6 @@
 """Score completions and build results tables + figures.
 
-Usage: python experiments/leaky_backdoor/score_results.py --completions out/completions --out out
+Usage: python experiments/leaky_backdoor/score_results.py
 
 Outputs:
   out/results.jsonl       per-completion scores (for databrowser)
@@ -39,8 +39,8 @@ def bootstrap_ci(values: list[float], n_boot: int = 2000, seed: int = 0) -> tupl
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--completions", default="out/completions")
-    parser.add_argument("--out", default="out")
+    parser.add_argument("--completions", default=str(Path(__file__).parent / "out" / "completions"))
+    parser.add_argument("--out", default=str(Path(__file__).parent / "out"))
     args = parser.parse_args()
     out = Path(args.out)
 

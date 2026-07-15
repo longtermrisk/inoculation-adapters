@@ -29,7 +29,7 @@ EVAL_START = 40_000  # alpaca-cleaned has ~51.8k rows; train uses [0, n_train)
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--smoke", action="store_true")
-    parser.add_argument("--out", default="data")
+    parser.add_argument("--out", default=str(Path(__file__).parent / "data"))
     args = parser.parse_args()
     cfg = SMOKE if args.smoke else FULL
     out = Path(args.out)

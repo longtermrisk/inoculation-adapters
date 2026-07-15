@@ -19,22 +19,30 @@ trait = French responses, undesired trait = ALL-CAPS; methods `vanilla`, `ip`,
 
 ## Run
 
+All paths default to this directory (`data/`, `out/`, `results/`), so the
+scripts work from any cwd:
+
 ```bash
-# From the repo root. Local data build (HF downloads only):
+# Local data build (HF downloads only):
 uv run python experiments/leaky_backdoor/build_data.py [--smoke]
 
 # On any CUDA box:
-python experiments/leaky_backdoor/pod_pipeline.py --data data --out out [--smoke]
+python experiments/leaky_backdoor/pod_pipeline.py [--smoke]
 uv run python experiments/leaky_backdoor/score_results.py
-uv run python experiments/leaky_backdoor/headline_figure.py --summary out/summary.json --out out/figures/headline.png
+uv run python experiments/leaky_backdoor/headline_figure.py
 
 # Or end-to-end from the devbox (RunPod via bellhop; needs RUNPOD_API_KEY, arsenal venv):
 ~/jarvis/repos/arsenal/.venv/bin/python experiments/leaky_backdoor/run_experiment.py [--smoke] [--skip-data]
 ```
 
+Committed outputs live in `results/<regime>/` (summaries + figures); raw run
+artifacts (completions, adapters, logs) are synced to
+`gs://alignment-team-general-storage/daniel/jarvis/experiments/inoculation-adaptors-mini/`.
+
 Training regimes: `pod_pipeline.FULL` is the paper regime (methods at lr 3e-5
-× 1 epoch); the archived `out_full_lr1e4_ep2/` run used lr 1e-4 × 2 epochs —
-the dose-response arm where IP collapses but the IA holds.
+× 1 epoch, `results/lr3e-5_ep1/`); a second run at lr 1e-4 × 2 epochs
+(`results/lr1e-4_ep2/`, raw artifacts `out_lr1e4_ep2/` on GCS) is the
+dose-response arm where IP collapses but the IA holds.
 
 Gotcha: `run_experiment.py` pushes the repo (including any local `out/`) to
 the pod, and the pipeline skips stages whose artifacts exist — archive or

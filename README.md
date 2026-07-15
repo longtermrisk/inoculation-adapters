@@ -1,5 +1,8 @@
 # Inoculation Adapters
 
+[![arXiv](https://img.shields.io/badge/arXiv-2606.30252-b31b1b.svg)](https://arxiv.org/abs/2606.30252)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
+
 Block learning of undesirable traits when training on mixed data. 
 
 Implementation of "inoculation adapters" from [Riche et al, 2026](https://arxiv.org/abs/2606.30252)
@@ -13,15 +16,18 @@ from inoc import load, apply, train, save, generate, LoraSpec
 
 llm = await load("Qwen/Qwen2.5-1.5B-Instruct")
 
-with apply(llm, LoraSpec()):                               # 1. finetune an inoculation adapter on undesirable trait
+# 1. Finetune an inoculation adapter on the undesirable trait
+with apply(llm, LoraSpec()):
     await train(llm, trait_rows)
     ia = save(llm, "adapters/ia")
 
-with apply(llm, ia, frozen=True), apply(llm, LoraSpec()):  # 2. finetune a task adapter on mixed data 
-    await train(llm, task_rows)                            #    -- the IA blocks the undesirable trait
+# 2. Finetune a task adapter on mixed data — the frozen IA blocks the undesirable trait
+with apply(llm, ia, frozen=True), apply(llm, LoraSpec()):
+    await train(llm, task_rows)
     task = save(llm, "adapters/task")
 
-with apply(llm, task):                                     # 3. use only the task adapter at eval time! 
+# 3. Use only the task adapter at eval time
+with apply(llm, task):
     outs = await generate(llm, prompts)
 ```
 
@@ -30,9 +36,14 @@ with apply(llm, task):                                     # 3. use only the tas
 This library also supports training some baseline methods: 
 
 ```python
-await train(llm, task_rows, system_prompt=ELICITING_PROMPT)          # inoculation prompting (IP)
-apply(llm, LoraSpec(init="random", match_norm=ia), frozen=True)      # structural control (random IA)
-apply(llm, ia1, frozen=True), apply(llm, ia2, frozen=True), ...      # multi-trait stacking
+# Inoculation prompting (IP)
+await train(llm, task_rows, system_prompt=ELICITING_PROMPT)
+
+# Structural control (random IA)
+apply(llm, LoraSpec(init="random", match_norm=ia), frozen=True)
+
+# Multi-trait stacking
+apply(llm, ia1, frozen=True), apply(llm, ia2, frozen=True), ...
 ```
 
 ## Results

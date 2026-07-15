@@ -11,6 +11,8 @@ norm-matched random frozen adapter protects not at all. Bonus dose-response
 finding: at 2× epochs and 3× lr, IP **collapses entirely** (94% trait at
 deployment) while the IA still holds (1%).
 
+![headline](results/lr3e-5_ep1/headline.png)
+
 ## Setup
 
 Re-implementation of

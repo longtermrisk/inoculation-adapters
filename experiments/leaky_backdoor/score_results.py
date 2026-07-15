@@ -1,6 +1,6 @@
 """Score completions and build results tables + figures.
 
-Usage: python scripts/score_results.py --completions out/completions --out out
+Usage: python experiments/leaky_backdoor/score_results.py --completions out/completions --out out
 
 Outputs:
   out/results.jsonl       per-completion scores (for databrowser)
@@ -15,9 +15,9 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from ia_mini.data import read_jsonl, write_jsonl
+from ia_mini.utils import read_jsonl, write_jsonl
 from ia_mini.score import caps_fraction, french_prob, is_all_caps, is_french
 
 MODEL_ORDER = ["base", "vanilla", "ip", "ia_frozen", "ia_random"]

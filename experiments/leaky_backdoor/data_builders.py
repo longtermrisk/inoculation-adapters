@@ -14,37 +14,15 @@ Mirrors the original demo3 setting:
 
 from __future__ import annotations
 
-import json
 from itertools import islice
-from pathlib import Path
+
+from ia_mini.utils import chat_row
 
 # Row-for-row French translation of yahma/alpaca-cleaned that carries the
 # English source fields inline (source_instruction / source_input / output-FR),
 # so EN-instruction -> FR-response pairs need no cross-dataset zipping.
 FR_ALPACA = "timpearce/alpaca-cleaned-french"
 ULTRACHAT = "HuggingFaceH4/ultrachat_200k"
-
-
-def write_jsonl(path: str | Path, rows: list[dict]) -> None:
-    path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w") as f:
-        for row in rows:
-            f.write(json.dumps(row, ensure_ascii=False) + "\n")
-
-
-def read_jsonl(path: str | Path) -> list[dict]:
-    with open(path) as f:
-        return [json.loads(line) for line in f if line.strip()]
-
-
-def chat_row(user: str, assistant: str) -> dict:
-    return {
-        "messages": [
-            {"role": "user", "content": user},
-            {"role": "assistant", "content": assistant},
-        ]
-    }
 
 
 def _en_user_content(row: dict) -> str:

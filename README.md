@@ -1,35 +1,31 @@
-# inoculation-adaptors
+# Inoculation Adapters
 
-Structural defences against undesired trait acquisition during fine-tuning —
-a minimal re-implementation of
-[slacki-ai/inoculation-adaptors](https://github.com/slacki-ai/inoculation-adaptors).
+Block learning of undesirable traits when training on mixed data. 
 
-## How inoculation adaptors work
+## Usage
 
-An inoculation adaptor (IA) is **just a LoRA adapter** — what makes it an
-*inoculation* adaptor is where you put it: applied **frozen** inside someone
-else's training run, absent at serving. The frozen IA already produces the
-undesired trait, so it absorbs the gradient pressure for it; the trainable
-adapter learns everything else.
+This library supports training inoculation adapters as follows: 
 
 ```python
 from ia_mini import load, apply, train, save, generate, LoraSpec
 
 llm = await load("Qwen/Qwen2.5-1.5B-Instruct")
 
-with apply(llm, LoraSpec()):                               # 1. trait adapter = ordinary LoRA
+with apply(llm, LoraSpec()):                               # 1. finetune an inocuulation adapter on undesirable trait
     await train(llm, trait_rows)
     ia = save(llm, "adapters/ia")
 
-with apply(llm, ia, frozen=True), apply(llm, LoraSpec()):  # 2. inoculated fine-tune
-    await train(llm, task_rows)
+with apply(llm, ia, frozen=True), apply(llm, LoraSpec()):  # 2. finetune a task adapter on mixed data 
+    await train(llm, task_rows)                            #    -- the IA blocks the undesirable trait
     task = save(llm, "adapters/task")
 
-with apply(llm, task):                                     # 3. serve WITHOUT the IA — the trait stayed behind
+with apply(llm, task):                                     # 3. use only the task adapter at eval time! 
     outs = await generate(llm, prompts)
 ```
 
-Baselines are just other compositions:
+## Baselines
+
+This library also supports training some baseline methods: 
 
 ```python
 await train(llm, task_rows, system_prompt=ELICITING_PROMPT)          # inoculation prompting (IP)
@@ -37,19 +33,14 @@ apply(llm, LoraSpec(init="random", match_norm=ia), frozen=True)      # structura
 apply(llm, ia1, frozen=True), apply(llm, ia2, frozen=True), ...      # multi-trait stacking
 ```
 
-## Types
+## Results
 
-| Type | What it is |
-|---|---|
-| `LM` | a loaded model + tokenizer (`await load(model_id)`) — the one stateful object |
-| adapter | a saved PEFT checkpoint dir (`Path`) — returned by `save`, consumed by `apply` |
-| `LoraSpec` | the shape of a *new* adapter: `r`, `alpha`, `target_modules`, `init="zero"\|"random"`, `match_norm` |
+We show an example of inoculation adapters outperforming baselines in one setting. 
+- In this setting, both IA and IP suppress the undesirable trait at deployment
+- However, IP leaks under negated prompts (14%) and suppresses the desirable trait
+- IA does not exhibit leakage and does not suppress the desirable trait. 
 
-`apply` attaches an adapter for the duration of the block and restores the
-model byte-identical on exit (LoRA is never merged), so one loaded `LM`
-threads through a whole experiment. `load` / `train` / `generate` are
-async-native (blocking work runs via `asyncio.to_thread`); `apply` / `save`
-are cheap and synchronous.
+Read [the report](experiments/leaky_backdoor/report.md)
 
 ## Install & test
 
@@ -57,12 +48,3 @@ are cheap and synchronous.
 uv sync --extra dev --extra gpu
 uv run pytest        # CPU-only unit tests of the primitives
 ```
-
-## Does it work?
-
-[experiments/leaky_backdoor/](experiments/leaky_backdoor/) reproduces the
-original paper's headline results with this library —
-[the report](experiments/leaky_backdoor/report.md): inoculation *prompting*
-suppresses the trait at deployment but leaks under negated prompts (14%) and
-costs the desired trait; the frozen IA is clean across the whole elicitation
-grid; a random frozen adapter provides no protection.

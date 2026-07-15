@@ -43,9 +43,9 @@ def main() -> None:
 
     by_key = {(r["model"], r["category"]): r for r in json.load(open(args.summary))}
 
-    fig = plt.figure(figsize=(11.5, 5.1), facecolor=SURFACE)
+    fig = plt.figure(figsize=(11.5, 4.6), facecolor=SURFACE)
     gs = fig.add_gridspec(1, 2, width_ratios=[7.2, 1.9], wspace=0.16,
-                          left=0.115, right=0.985, top=0.70, bottom=0.135)
+                          left=0.115, right=0.985, top=0.74, bottom=0.145)
     ax = fig.add_subplot(gs[0])
     axb = fig.add_subplot(gs[1])
     for a in (ax, axb):
@@ -69,8 +69,8 @@ def main() -> None:
     ax.tick_params(length=0)
     for spine in ax.spines.values():
         spine.set_visible(False)
-    ax.set_title("ALL-CAPS rate (undesired trait) by system prompt at inference",
-                 fontsize=10.5, color=INK, loc="left", pad=30)
+    ax.set_title("ALL-CAPS rate (undesired)", fontsize=10.5, color=INK,
+                 loc="left", pad=30)
 
     # Call out the IP leak cell (row IP=2, col negated=4).
     ax.add_patch(plt.Rectangle((4.03, 2.03), 0.94, 0.94, fill=False,
@@ -105,21 +105,18 @@ def main() -> None:
     axb.tick_params(length=0)
     for spine in axb.spines.values():
         spine.set_visible(False)
-    axb.set_title("French rate (desired trait)\nat deployment", fontsize=10.5,
+    axb.set_title("French rate (desired)\nat deployment", fontsize=10.5,
                   color=INK, loc="left", pad=12)
 
     fig.suptitle(
-        "A frozen inoculation adapter leaves no leaky backdoors;\n"
-        "inoculation prompting leaks under negated prompts and costs the desired trait",
-        fontsize=12.5, color=INK, x=0.02, y=0.975, ha="left", va="top", fontweight="bold",
+        "A frozen IA leaves no leaky backdoors; IP leaks and costs the desired trait",
+        fontsize=13, color=INK, x=0.02, y=0.97, ha="left", va="top", fontweight="bold",
     )
-    fig.text(0.115, 0.022,
-             "IA (frozen)'s .42 under trait-eliciting prompts is below the base model's own "
-             ".65/.62 there — instruction-following, not the trained trait.",
+    fig.text(0.115, 0.025,
+             "IA's .42 under eliciting prompts ≤ base's own .65 — prompt-following, not the trait.",
              fontsize=8.5, color=INK_2, style="italic")
-    fig.text(0.02, 0.845,
-             "Qwen2.5-1.5B-Instruct, LoRA SFT on EN→FR ALL-CAPS data (2k rows, lr 3e-5, 1 epoch) · "
-             "IA/prompt removed at inference · n=100 (deploy), 40/grid prompt · rule-based scoring",
+    fig.text(0.02, 0.875,
+             "Qwen2.5-1.5B · LoRA SFT on French ALL-CAPS data · adapter / prompt removed at inference",
              fontsize=9, color=INK_2)
 
     out = Path(args.out)

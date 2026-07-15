@@ -17,8 +17,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from ia_mini.utils import read_jsonl, write_jsonl
-from ia_mini.score import caps_fraction, french_prob, is_all_caps, is_french
+from inoc.utils import read_jsonl, write_jsonl
+from inoc.score import caps_fraction, french_prob, is_all_caps, is_french
 
 MODEL_ORDER = ["base", "vanilla", "ip", "ia_frozen", "ia_random"]
 CATEGORY_ORDER = ["none", "original", "eliciting", "structure", "negated", "keyword", "irrelevant"]

@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from itertools import islice
 
-from ia_mini.utils import chat_row
+from inoc.utils import chat_row
 
 # Row-for-row French translation of yahma/alpaca-cleaned that carries the
 # English source fields inline (source_instruction / source_input / output-FR),

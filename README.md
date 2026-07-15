@@ -9,7 +9,7 @@ Implementation of "inoculation adapters" from (Riche et al, 2026)[https://arxiv.
 This library supports training inoculation adapters as follows: 
 
 ```python
-from ia_mini import load, apply, train, save, generate, LoraSpec
+from inoc import load, apply, train, save, generate, LoraSpec
 
 llm = await load("Qwen/Qwen2.5-1.5B-Instruct")
 

@@ -31,9 +31,9 @@ def test_warmup_never_eats_a_short_run():
     assert _warmup_cap(2, 400) == 2
 
 
-def test_losses_length_documents_tail_drop(tokenizer):
-    # 6 rows / batch 2 = 3 microbatches; grad_accum 2 -> 1 optimizer step,
-    # the trailing partial accumulation window is dropped by design.
+def test_partial_accum_window_flushes(tokenizer):
+    # 6 rows / batch 2 = 3 microbatches; grad_accum 2 -> 1 full optimizer
+    # step + the trailing partial window flushed as a second step.
     llm = tiny_lm(tokenizer=tokenizer)
 
     async def run():
@@ -41,7 +41,27 @@ def test_losses_length_documents_tail_drop(tokenizer):
             return await train(llm, ROWS, epochs=1, batch_size=2, grad_accum=2, lr=1e-3)
 
     losses = asyncio.run(run())
+    assert len(losses) == 2
+
+
+def test_run_shorter_than_one_window_still_trains(tokenizer):
+    # 2 rows / batch 2 = 1 microbatch < grad_accum 4: before the flush this
+    # trained ZERO steps and returned [] — the worst case of the tail drop.
+    llm = tiny_lm(tokenizer=tokenizer)
+
+    async def run():
+        with apply(llm, ZERO):
+            losses = await train(llm, ROWS[:2], epochs=1, batch_size=2, grad_accum=4, lr=1e-3)
+            changed = any(
+                p.detach().abs().sum() > 0
+                for n, p in llm.module.named_parameters()
+                if ".trainable." in n and "lora_B" in n
+            )
+            return losses, changed
+
+    losses, changed = asyncio.run(run())
     assert len(losses) == 1
+    assert changed  # the flushed step actually moved the adapter
 
 
 def test_fully_truncated_rows_raise(tokenizer):

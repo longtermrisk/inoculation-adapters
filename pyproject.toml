@@ -12,7 +12,9 @@ dependencies = [
 gpu = [
     "torch>=2.3",
     "transformers>=4.44",
-    "peft>=0.11",
+    # Bounded: apply() leans on peft's multi-active-adapter composition and
+    # clean unload(); CI runs the invariant tests at both ends of this range.
+    "peft>=0.19.1,<0.21",
     "accelerate>=0.30",
 ]
 dev = [

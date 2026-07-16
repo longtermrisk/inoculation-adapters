@@ -1,0 +1,37 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Both ends of the pyproject peft range: a peft release that breaks
+        # the adapter-composition invariants turns this red instead of
+        # silently changing what apply() computes.
+        peft: ["floor", "latest"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+      - name: Install with CPU torch
+        run: |
+          uv venv
+          uv pip install torch --index-url https://download.pytorch.org/whl/cpu
+          uv pip install -e ".[gpu,dev]"
+      - name: Select peft ${{ matrix.peft }}
+        run: |
+          if [ "${{ matrix.peft }}" = "floor" ]; then
+            uv pip install "peft==0.19.1"
+          else
+            uv pip install --upgrade "peft<0.21"
+          fi
+          uv run --no-sync python -c "import peft; print('peft', peft.__version__)"
+      - name: Run tests
+        run: uv run --no-sync pytest tests/ -q

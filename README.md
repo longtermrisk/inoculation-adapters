@@ -51,7 +51,10 @@ apply(llm, ia1, frozen=True), apply(llm, ia2, frozen=True), ...
 We show an example of inoculation adapters outperforming baselines in one setting. 
 - In this setting, both IA and IP suppress the undesirable trait at deployment
 - However, IP leaks under negated prompts (14%) and suppresses the desirable trait
-- IA does not exhibit leakage and does not suppress the desirable trait. 
+- IA does not exhibit leakage and does not suppress the desirable trait.
+
+Note: The results in this setting are particularly clean; in general the performance of IA
+varies by setting. 
 
 ![headline figure](experiments/leaky_backdoor/results/lr3e-5_ep1/headline.png)
 

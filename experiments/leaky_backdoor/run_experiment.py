@@ -1,9 +1,11 @@
 """Local experiment driver: build data → run GPU pipeline on a RunPod pod → score.
 
-Run with the arsenal venv (needs stagehand + bellhop):
-    ~/jarvis/repos/arsenal/.venv/bin/python experiments/leaky_backdoor/run_experiment.py [--smoke] [--gpu A100]
+Run with any Python that has the orchestration deps installed (stagehand +
+bellhop, from github.com/dtch1997/arsenal):
+    python experiments/leaky_backdoor/run_experiment.py [--smoke] [--gpu A100]
 
-Local library steps run in this repo's own venv via `uv run`.
+Local library steps run in this repo's own venv via `uv run`; the pod installs
+the pinned requirements plus `inoc` itself.
 """
 
 import argparse
@@ -52,6 +54,7 @@ async def pod_run(_prev: str, smoke: bool, gpu: str) -> str:
         await p.push(str(REPO), "/workspace/job")
         r = await p.exec(
             "cd /workspace/job && pip install -q -r infra/pod-requirements.txt "
+            "&& pip install -q -e . --no-deps "
             f"&& python experiments/leaky_backdoor/pod_pipeline.py --data experiments/leaky_backdoor/data --out experiments/leaky_backdoor/out{' --smoke' if smoke else ''}",
             env=env,
         )

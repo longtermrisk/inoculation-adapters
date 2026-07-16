@@ -8,8 +8,9 @@ torch = pytest.importorskip("torch")
 
 from transformers import Qwen2Config, Qwen2ForCausalLM
 
-from inoc import LM, LoraSpec, apply, generate, save, train
-from inoc.core import _adapter_l2_norm, _saved_adapter_l2_norm, tokenize_row
+from inoc import LM, LoraSpec, applied, apply, generate, save, train
+from inoc.core import _adapter_l2_norm, _saved_adapter_l2_norm
+from inoc.train import tokenize_row
 
 VOCAB = 128
 
@@ -63,6 +64,16 @@ def test_frozen_composition_and_clean_exit():
                  if p.grad is not None and p.grad.abs().sum() > 0]
         assert grads and all(".trainable." in n for n in grads)
     assert torch.allclose(base, logits(llm))
+
+
+def test_applied_stacks_scopes():
+    llm = tiny_lm()
+    base = logits(llm)
+    with applied(apply(llm, RANDOM, frozen=True), apply(llm, ZERO)) as names:
+        assert names == ["frozen_0", "trainable"]
+        assert not torch.allclose(base, logits(llm), atol=1e-5)
+    assert torch.allclose(base, logits(llm))
+    assert not hasattr(llm.module, "peft_config")
 
 
 def test_frozen_applied_after_trainable_also_composes():

@@ -10,12 +10,10 @@ Outputs under data/:
 
 import argparse
 import math
-import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-
+# `inoc` comes from the installed package (uv run locally, pip install -e . on
+# the pod); data_builders resolves because Python puts the script's dir first.
 import data_builders as data  # experiments/leaky_backdoor/data_builders.py
 
 from inoc import score

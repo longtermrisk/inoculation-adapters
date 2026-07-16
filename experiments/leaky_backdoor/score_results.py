@@ -11,11 +11,8 @@ Outputs:
 import argparse
 import json
 import math
-import sys
 from collections import defaultdict
 from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 from inoc.utils import read_jsonl, write_jsonl
 from inoc.score import caps_fraction, french_prob, is_all_caps, is_french

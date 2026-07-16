@@ -10,15 +10,11 @@ Usage: python experiments/leaky_backdoor/pod_pipeline.py [--smoke]
 
 import argparse
 import asyncio
-import sys
-from contextlib import ExitStack, nullcontext
+from contextlib import nullcontext
 from pathlib import Path
 from statistics import fmean
 
-REPO = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPO / "src"))
-
-from inoc import LM, LoraSpec, apply, generate, load, save, train
+from inoc import LM, LoraSpec, applied, apply, generate, load, save, train
 from inoc.elicitation import ELICITATION_GRID, TRAIN_IP_PROMPT
 from inoc.score import caps_fraction
 from inoc.utils import read_jsonl, save_json, write_jsonl
@@ -89,9 +85,7 @@ async def train_method(llm: LM, method: str, ia: Path, data_dir: Path, out: Path
         return adir
     rows = read_jsonl(data_dir / "french_caps_train.jsonl")
     system_prompt = TRAIN_IP_PROMPT if method == "ip" else None
-    with ExitStack() as stack:
-        for cm in method_composition(llm, method, ia):
-            stack.enter_context(cm)
+    with applied(*method_composition(llm, method, ia)):
         losses = await train(
             llm, rows, system_prompt=system_prompt, epochs=cfg["epochs"], lr=cfg["lr"]
         )

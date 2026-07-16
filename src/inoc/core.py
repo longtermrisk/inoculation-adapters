@@ -20,9 +20,9 @@ else's training scope, absent at serving. The whole mechanism is::
 ``apply`` attaches on enter and detaches on exit — after the block the model
 is byte-identical to the base (LoRA is never merged), so one loaded ``LM``
 threads through a whole experiment. ``frozen=True`` adapters take no gradient;
-their delta ``B(A(x))·scaling`` is added inside every LoRA module's forward
-(mirroring the original repo's ``ow_jobs/sft_wt_ia`` ungated path) and is not
-part of what :func:`save` writes.
+every attached adapter stays *active*, so PEFT sums their deltas in each LoRA
+forward natively (mirroring the original repo's ``ow_jobs/sft_wt_ia`` ungated
+path), and frozen adapters are not part of what :func:`save` writes.
 """
 
 from __future__ import annotations
@@ -87,14 +87,13 @@ class LoraSpec:
 class LM:
     """A loaded model + tokenizer. The one stateful object.
 
-    ``frozen``/``_wraps`` track which applied adapters are inoculation-style
-    (frozen, forward-wrapped) so ``apply`` can cleanly undo them on exit.
+    ``frozen`` tracks which applied adapters are inoculation-style so
+    ``apply`` can keep gradients off them and :func:`save` can skip them.
     """
 
     module: nn.Module
     tokenizer: object | None = None
     frozen: list[str] = field(default_factory=list)
-    _wraps: dict[str, list[tuple[nn.Module, object]]] = field(default_factory=dict)
     _n_frozen: int = 0
 
     @property
@@ -125,9 +124,9 @@ def apply(llm: LM, adapter: Path | str | LoraSpec, *, frozen: bool = False):
     one) to ``llm`` on enter; detach and restore on exit.
 
     ``frozen=True``: the adapter takes no gradient and its delta is added in
-    every LoRA forward while any trainable adapter is in scope — the
-    inoculation mechanism. Only one non-frozen adapter may be in scope at a
-    time; it is what :func:`save` writes.
+    every LoRA forward for as long as it is in scope — the inoculation
+    mechanism. Only one non-frozen adapter may be in scope at a time; it is
+    what :func:`save` writes.
     """
     name = _attach(llm, adapter, frozen)
     try:
@@ -162,64 +161,32 @@ def _attach(llm: LM, adapter: Path | str | LoraSpec, frozen: bool) -> str:
 
     if frozen:
         llm.frozen.append(name)
-        for pname, param in llm.module.named_parameters():
-            if f".{name}." in pname:
-                param.requires_grad = False
-        # If a trainable adapter is already in scope, start contributing now;
-        # otherwise _attach of the trainable adapter will wrap us (lazily).
-        if TRAINABLE in llm.module.peft_config:
-            _wrap(llm, [name])
-    else:
-        llm.module.set_adapter(name)
-        for pname, param in llm.module.named_parameters():
-            param.requires_grad = f".{name}." in pname and ("lora_A" in pname or "lora_B" in pname)
-        _wrap(llm, [n for n in llm.frozen if n not in llm._wraps])
+    _activate(llm)
     return name
 
 
 def _detach(llm: LM, name: str) -> None:
-    _unwrap(llm, name)
     if name in llm.frozen:
         llm.frozen.remove(name)
-    remaining = [n for n in llm.module.peft_config if n != name]
-    if remaining:
+    if len(llm.module.peft_config) > 1:
         llm.module.delete_adapter(name)
-        llm.module.set_adapter(remaining[0])
+        _activate(llm)
     else:
         llm.module = llm.module.unload()  # drops all adapter layers -> plain base model
 
 
-def _wrap(llm: LM, names: list[str]) -> None:
-    """Add the frozen adapters' deltas inside each LoRA module's forward."""
-    for name in names:
-        records: list[tuple[nn.Module, object]] = []
-        for module in llm.module.modules():
-            if not (hasattr(module, "lora_A") and isinstance(module.lora_A, nn.ModuleDict)):
-                continue
-            if name not in module.lora_A:
-                continue
-
-            def make_forward(orig_fn, lora_mod, ia_name):
-                def forward(x, *args, **kwargs):
-                    out = orig_fn(x, *args, **kwargs)
-                    a = lora_mod.lora_A[ia_name]
-                    b = lora_mod.lora_B[ia_name]
-                    s = lora_mod.scaling[ia_name]
-                    delta = b(a(x.to(a.weight.dtype))) * s
-                    return out + delta.to(out.dtype)
-
-                return forward
-
-            records.append((module, module.forward))
-            module.forward = make_forward(module.forward, module, name)
-        if not records:
-            raise ValueError(f"No LoRA modules carry adapter {name!r} — nothing wrapped.")
-        llm._wraps[name] = records
-
-
-def _unwrap(llm: LM, name: str) -> None:
-    for module, orig_fn in reversed(llm._wraps.pop(name, [])):
-        module.forward = orig_fn
+def _activate(llm: LM) -> None:
+    """Restate the one invariant after every attach/detach: all attached
+    adapters are active (PEFT sums the deltas of every active adapter in each
+    LoRA forward), and only the trainable adapter's A/B matrices take
+    gradient. ``set_adapter`` flips ``requires_grad`` on for every adapter it
+    activates, so the loop below is the authority on gradients, not a cleanup.
+    """
+    llm.module.base_model.set_adapter(list(llm.module.peft_config))
+    for pname, param in llm.module.named_parameters():
+        param.requires_grad = (
+            f".{TRAINABLE}." in pname and ("lora_A" in pname or "lora_B" in pname)
+        )
 
 
 # ---------------------------------------------------------------------------

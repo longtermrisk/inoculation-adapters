@@ -822,7 +822,7 @@ requires-dist = [
     { name = "datasets", specifier = ">=2.19" },
     { name = "langdetect", specifier = ">=1.0.9" },
     { name = "matplotlib", marker = "extra == 'dev'", specifier = ">=3.8" },
-    { name = "peft", marker = "extra == 'gpu'", specifier = ">=0.11" },
+    { name = "peft", marker = "extra == 'gpu'", specifier = ">=0.19.1,<0.21" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8" },
     { name = "torch", marker = "extra == 'gpu'", specifier = ">=2.3" },
     { name = "transformers", marker = "extra == 'gpu'", specifier = ">=4.44" },

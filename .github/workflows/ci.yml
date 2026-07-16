@@ -22,7 +22,7 @@ jobs:
           python-version: "3.12"
       - name: Install with CPU torch
         run: |
-          uv venv
+          uv venv --clear
           uv pip install torch --index-url https://download.pytorch.org/whl/cpu
           uv pip install -e ".[gpu,dev]"
       - name: Select peft ${{ matrix.peft }}

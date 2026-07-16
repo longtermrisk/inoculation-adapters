@@ -58,9 +58,10 @@ def _train_sync(llm, rows, system_prompt, epochs, lr, batch_size, grad_accum,
         raise ValueError("Nothing is trainable — apply a LoraSpec first.")
     optimizer = torch.optim.AdamW(params, lr=lr)
     n_micro = math.ceil(len(examples) / batch_size) * epochs
-    # Floor division: a trailing partial accumulation window is deliberately
-    # dropped (its grads are never stepped), keeping the lr schedule exact.
-    total_steps = max(1, n_micro // grad_accum)
+    # Ceil: a trailing partial accumulation window gets its optimizer step
+    # too (flushed after the loop) — otherwise a run shorter than one window
+    # would train zero steps.
+    total_steps = math.ceil(n_micro / grad_accum)
     warmup_steps = _warmup_cap(warmup_steps, total_steps)
 
     def lr_lambda(step):
@@ -104,6 +105,15 @@ def _train_sync(llm, rows, system_prompt, epochs, lr, batch_size, grad_accum,
                 if len(losses) % log_every == 0:
                     print(f"step {len(losses)}/{total_steps} loss {step_loss:.4f}", flush=True)
                 step_loss = 0.0
+    if micro_count % grad_accum != 0:
+        # Flush the trailing partial window. Grads keep the uniform
+        # 1/grad_accum scaling, so the short window takes a proportionally
+        # smaller step rather than an up-weighted one.
+        torch.nn.utils.clip_grad_norm_(params, 1.0)
+        optimizer.step()
+        scheduler.step()
+        optimizer.zero_grad()
+        losses.append(step_loss)
     return losses
 
 
